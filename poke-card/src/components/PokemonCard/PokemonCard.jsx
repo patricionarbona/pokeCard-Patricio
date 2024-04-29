@@ -4,63 +4,23 @@ function PokemonCard() {
 
     const [ id, setId ] = useState(
         // Math.floor(Math.random() * (1025 - 1 + 1)) + 1
-        // Math.floor(Math.random() * (151 - 1 + 1)) + 1
-        25
+        Math.floor(Math.random() * (151 - 1 + 1)) + 1
     );
 
-    const { pokemonData, setPokemon } = useState(null)
-    const fotin = pokemonData?.sprites.other.dream_world.front_default
-
-    const [ foto , setFoto] = useState("rutaFoto")
-
-    const [stats , setStats ] = useState([{},{},{},{}])
-    const [ exp , setExp ] = useState(null)
-    const [ name , setName ] = useState("pokimon")
-
-    const { base_stat : vida } = stats[0]
-    const { base_stat : ataque } = stats[1]
-    const { base_stat : defensa } = stats[2]
-    const { base_stat : ataqueEspecial } = stats[3]
+    const [ pokemonData, setPokemon ] = useState()
      
     useEffect(() => {
 
 
-        const respuesta = fetch(`https://pokeapi.co/api/v2/pokemon/${id}`)
-        .then(res => {
-            console.log(res);
-            if(!res.ok) {
-                console.log(res);
-                throw new Error();
-            }
-            else {
-                return res.json();
-            }
-        })
-        .then(res => {
-
-            console.log("respuesta 2: ",res)
-            // setPokemon(res)
-            let rutaFoto = res.sprites.other.dream_world.front_default;
-            // let rutaFoto = res.sprites.other.showdown.front_default;
-            let nombreFormateado = res.name.charAt(0).toUpperCase() + res.name.slice(1);
-            console.log(rutaFoto);
-            setFoto(rutaFoto);
-            console.log(stats)
-            setStats(res.stats)
-            setName(nombreFormateado)
-            setExp(res.base_experience)
-            
-            console.log(res);
-
-        })
-        .catch(
-            console.error("ERROR MORTAL")
-        )
+      fetch(`https://pokeapi.co/api/v2/pokemon/${id}`)
+        .then(res => { return res.json(); })
+        .then(res => { setPokemon(res) })
     }, [id])
 
     function handleClickAleatorio() {
         // let random = Math.floor(Math.random() * (1025 - 1 + 1)) + 1;
         let random = Math.floor(Math.random() * (151 - 1 + 1)) + 1;
+        console.log(pokemonData)
         setId( random);
     }
 
@@ -70,18 +30,18 @@ function PokemonCard() {
         <div className="flex flex-col items-center  z-10 top-0">
             <div className='absolute bg-pokemon-bg-pattern w-full h-32 rounded-t-2xl  -z-10 top-0'></div>
           <div className="bg-white w-48 h-48 rounded-full overflow-hidden">
-            <img src={foto} className="w-full h-full"/>
+            <img src={pokemonData?.sprites.other.dream_world.front_default} className="w-full h-full"/>
           </div>
           <div className='flex flex-col items-center'>
-            <p className='font-bold text-lg py-2'>{name} <span className='text-gray-500 font-light'>{vida}hp</span></p>
-            <p className='text-gray-500 font-light pb-2'>{exp} exp</p>
+            <p className='font-bold text-lg py-2'>{pokemonData?.name.charAt(0).toUpperCase() + pokemonData?.name.slice(1)} <span className='text-gray-500 font-light'>{pokemonData?.stats[0].base_stat}hp</span></p>
+            <p className='text-gray-500 font-light pb-2'>{pokemonData?.base_experience} exp</p>
           </div>
         </div>
         <div className= 'border-solid border-zinc-300 border-t-2 flex flex-col justify-between z-10'>
           <div className="h-20 flex justify-around items-center">
-              <p className="flex flex-col items-center font-extralight text-xs"><span className='font-bold'>{ataque}K</span>Ataque</p>
-              <p className="flex flex-col items-center font-extralight text-xs"><span className='font-bold'>{ataqueEspecial}K</span>Ataque Especial</p>
-              <p className="flex flex-col items-center font-extralight text-xs"><span className='font-bold'>{defensa}K</span>Defensa</p>
+              <p className="flex flex-col items-center font-extralight text-xs"><span className='font-bold'>{pokemonData?.stats[1].base_stat}K</span>Ataque</p>
+              <p className="flex flex-col items-center font-extralight text-xs"><span className='font-bold'>{pokemonData?.stats[3].base_stat}K</span>Ataque Especial</p>
+              <p className="flex flex-col items-center font-extralight text-xs"><span className='font-bold'>{pokemonData?.stats[2].base_stat}K</span>Defensa</p>
           </div>
           <button onClick={handleClickAleatorio} className=" flex justify-between items-center w-48 self-center bg-blue-500 text-white font-bold py-1 px-4 rounded hover:bg-blue-700">
           <svg aria-hidden="true" className="w-4 h-4 text-gray-200 animate-spin dark:text-gray-600 fill-blue-600" viewBox="0 0 100 101" fill="none" xmlns="http://www.w3.org/2000/svg">
