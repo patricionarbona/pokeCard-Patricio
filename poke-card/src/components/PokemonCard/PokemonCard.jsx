@@ -65,7 +65,7 @@ function PokemonCard() {
               </p>
           </div>
           <button onClick={handleClickAleatorio} className={
-            (isLoading?"bg-slate-700 hover: bg-slate-500 cursor-no-drop":"bg-blue-500 hover:bg-blue-700" ) + " w-48 self-center text-white font-bold py-1 px-4 rounded  text-center" 
+            (isLoading?"bg-slate-700 hover:bg-slate-500 cursor-no-drop":"bg-blue-500 hover:bg-blue-700" ) + " w-48 self-center text-white font-bold py-1 px-4 rounded  text-center" 
             } disabled={isLoading}>
             Generar Pokemon
           </button>
