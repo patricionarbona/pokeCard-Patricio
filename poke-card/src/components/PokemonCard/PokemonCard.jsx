@@ -2,43 +2,44 @@ import { useState, useEffect } from "react";
 
 function PokemonCard() {
     const [id, setId] = useState(
-        Math.floor(Math.random() * (1025 - 1 + 1)) + 1 // Esta funcion la vas a reutiliza, haz una funcion y reutilizala
+       aleatorio(1025,1) // Esta funcion la vas a reutiliza, haz una funcion y reutilizala
     );
 
+    const [ errorMsg, setErrorMsg ] = useState();    
     const [pokemonData, setPokemon] = useState(null);
     const [isLoading, setIsLoading] = useState(false);
 
+    
+    function aleatorio(maximo,minimo) {
+        return Math.floor(Math.random() * (maximo - minimo + 1)) + minimo;
+    }
+    
+    async function recuperarPokemon() {
+        try {
+            setIsLoading(true)
+            const res = await fetch(`https://pokeapi.co/api/v2/pokemon/${id}`)
+            const respuesta = await res.json()
+            setPokemon(respuesta)
+            setIsLoading(false)
+            return respuesta
+        } catch(err) {
+            setErrorMsg("Error al recuperar de la pokeApi")
+        }
+    }
+
     function handleClickAleatorio() {
-        let random = Math.floor(Math.random() * (1025 - 1 + 1)) + 1;
+        let random = aleatorio(1025,1)
         setId(random);
     }
 
+
     useEffect(() => {
-        // Esta bien , pero prueba ha hacer la peticion con una funcion asyncrona y controlar un posible error.
-        setIsLoading(true);
-        fetch(`https://pokeapi.co/api/v2/pokemon/${id}`)
-            .then((res) => {
-                return res.json();
-            })
-            .then((res) => {
-                setPokemon(res);
-            })
-            .finally(() => {
-                setIsLoading(false);
-            });
+        recuperarPokemon(); //<- Extraje el fetch a esta funcion     
     }, [id]);
-
-    /* Ejemplo de como puedes controlar la pokecard si da un fallo la peticion.
-     if (errorMsg) {
-        return <p>Error: {errorMsg}</p>; // Mostrar un mensaje de error si hay uno
-    }
-
-     */
 
     return (
         <>
-            {" "}
-            {/* Esto no es necasario ponerlo sin motivo. */}
+        {errorMsg || 
             <div className="box-content bg-white h-96 w-80 justify-evenly rounded-2xl shadow-lg shadow-black relative z-10 pt-10">
                 <div className="flex flex-col items-center z-10 top-0">
                     <div className="absolute bg-pokemon-bg-pattern w-full h-32 rounded-t-2xl  -z-10 top-0"></div>
@@ -120,7 +121,7 @@ function PokemonCard() {
                         Generar Pokemon
                     </button>
                 </div>
-            </div>
+            </div>}
         </>
     );
 }
